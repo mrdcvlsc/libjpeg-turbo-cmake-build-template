@@ -10,6 +10,6 @@ Diagnostics:
 CompileFlags:
   Add: [
     -std=c++17,
-    "-Ibuild/libjpegturbo_install_dir/include"
+    "-Iturbojpeg/include"
   ]
   Compiler: clang++
