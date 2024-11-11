@@ -42,4 +42,6 @@ jobs:
       run: cmake --build build --config ${{matrix.build.name}}
 
     - name: Run ${{matrix.platform.bin}} executable
+      env:
+        DYLD_LIBRARY_PATH: ./turbojpeg/lib
       run: ${{matrix.platform.bin}}
