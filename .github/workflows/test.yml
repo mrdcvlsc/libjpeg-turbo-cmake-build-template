@@ -19,8 +19,8 @@ jobs:
         platform:
         - { name: Windows VS2019, os: windows-2019,   bin: .\\build\\bin\\Release\\main.exe }
         - { name: Windows VS2022, os: windows-2022,   bin: .\\build\\bin\\Release\\main.exe }
-        - { name: Windows Clang,  os: windows-latest, bin: .\\build\\bin\\Release\\main.exe, flags: -G "Unix Makefiles" -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ }
-        - { name: Windows GCC,    os: windows-latest, bin: .\\build\\bin\\Release\\main.exe, flags: -G "Unix Makefiles" -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
+        - { name: Windows Clang,  os: windows-latest, bin: .\\build\\bin\\main.exe, flags: -G "Unix Makefiles" -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ }
+        - { name: Windows GCC,    os: windows-latest, bin: .\\build\\bin\\main.exe, flags: -G "Unix Makefiles" -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
         - { name: MacOS XCode,    os: macos-latest,   bin: ./build/bin/main }
         - { name: Linux GCC,      os: ubuntu-latest,  bin: ./build/bin/main }
         - { name: Linux Clang,    os: ubuntu-latest,  bin: ./build/bin/main,                 flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ }
@@ -40,6 +40,22 @@ jobs:
 
     - name: Build ${{matrix.platform.bin}} executable
       run: cmake --build build --config ${{matrix.build.name}}
+
+    - name: Show build directory tree
+      continue-on-error: true
+      run: |
+        echo "Build Tree"
+        tree .\build /f
+        echo "Build Bin"
+        tree .\build\bin /f
+        echo "Main Binary Directory For Windows Debug"
+        tree .\build\bin\main.dir /f
+        echo "LIBJPEGTURBO Directory For Windows Debug"
+        tree .\build\bin\LibJpegTurbo.dir /f
+
+    - name: Test Run Debug
+      continue-on-error: true
+      run: .\\build\\bin\\main.dir
 
     - name: Run ${{matrix.platform.bin}} executable
       env:
