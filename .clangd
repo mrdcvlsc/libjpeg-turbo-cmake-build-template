@@ -1,0 +1,15 @@
+InlayHints:
+  Designators: No
+  Enabled: Yes
+  ParameterNames: No
+  DeducedTypes: No
+  
+Diagnostics:
+  UnusedIncludes: Strict
+
+CompileFlags:
+  Add: [
+    -std=c++17,
+    "-Ibuild/libjpegturbo_install_dir/include"
+  ]
+  Compiler: clang++

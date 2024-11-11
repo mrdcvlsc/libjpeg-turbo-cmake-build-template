@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.11)
-project(MyProject)
+project(LibJpegTurboCmakeTemplate)
 
-# Set the C++ standard
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+##############################################################################
+                    # DOWNLOAD AND BUILD LIBJPEG-TURBO
+##############################################################################
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Optionally build shared or static libraries based on the BUILD_SHARED_LIBS flag
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
@@ -20,7 +22,7 @@ endif()
 include(ExternalProject)
 
 # Define the libjpeg-turbo external project
-ExternalProject_Add(JpegTurbo
+ExternalProject_Add(LibJpegTurbo
     URL https://github.com/libjpeg-turbo/libjpeg-turbo/archive/refs/tags/3.0.4.zip
     PREFIX ${CMAKE_CURRENT_LIST_DIR}/turbojpeg
     CMAKE_ARGS
@@ -30,27 +32,44 @@ ExternalProject_Add(JpegTurbo
       -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
       -DENABLE_STATIC=${LIBJPEGTURBO_STATIC_LIBRARY_FLAG}
       -DENABLE_SHARED=${LIBJPEGTURBO_SHARED_LIBRARY_FLAG}
+      -DENABLE_TESTING=OFF
 )
 
-# Specify include and library paths after the build of JpegTurbo
-set(LIBJPEG_TURBO_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/turbojpeg/include)
-set(LIBJPEG_TURBO_LIB_DIR ${CMAKE_CURRENT_LIST_DIR}/turbojpeg/lib)
+# Delay finding the library until after LibJpegTurbo is built
+ExternalProject_Get_Property(LibJpegTurbo install_dir)
 
-# Define the main project executable
-add_executable(MyProject main.cpp)
+# Specify include and library paths after the build of LibJpegTurbo
+set(LIBJPEG_TURBO_INCLUDE_DIR ${install_dir}/include)
+set(LIBJPEG_TURBO_LIB_DIR ${install_dir}/lib)
 
-# Make sure MyProject depends on JpegTurbo
-add_dependencies(MyProject JpegTurbo)
-
-# Delay finding the library until after JpegTurbo is built
-ExternalProject_Get_Property(JpegTurbo install_dir)
+if (MSVC)
+    file(GLOB LIBJPEG_TURBO_DLL "${install_dir}/bin/*.dll")
+endif ()
 
 if (BUILD_SHARED_LIBS)
-    set(LIBJPEG_TURBO_LIB "${install_dir}/lib/libturbojpeg.so")   # Shared TurboJPEG library
+    set(LIBJPEG_TURBO_LIB "${install_dir}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}turbojpeg${CMAKE_SHARED_LIBRARY_SUFFIX}")
 else()
-    set(LIBJPEG_TURBO_LIB "${install_dir}/lib/libturbojpeg.a")    # Static TurboJPEG library
+    set(LIBJPEG_TURBO_LIB "${install_dir}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}turbojpeg${CMAKE_STATIC_LIBRARY_SUFFIX}")
 endif()
 
+##############################################################################
+                        # LINK WITH LIBJPEG-TURBO
+##############################################################################
+
+# Define the main project executable
+add_executable(main main.cpp)
+
+# Make sure main depends on LibJpegTurbo
+add_dependencies(main LibJpegTurbo)
+
 # Include libjpeg-turbo headers and link to the built library
-target_include_directories(MyProject PRIVATE ${LIBJPEG_TURBO_INCLUDE_DIR})
-target_link_libraries(MyProject ${LIBJPEG_TURBO_LIB})
+target_include_directories(main PRIVATE ${LIBJPEG_TURBO_INCLUDE_DIR})
+target_link_libraries(main ${LIBJPEG_TURBO_LIB})
+
+# Copy DLLs to the output directory on windows if there are
+if (MSVC)
+    add_custom_command(TARGET main POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${LIBJPEG_TURBO_DLL}
+        $<TARGET_FILE_DIR:main>)
+endif ()
