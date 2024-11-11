@@ -32,6 +32,14 @@ jobs:
 
     steps:
 
+    - name: Install nasm in ubuntu
+      continue-on-error: true
+      run: sudo apt install nasm
+
+    - name: Install nasm in windows
+      continue-on-error: true
+      run: choco install nasm
+
     - name: Checkout Repository
       uses: actions/checkout@v4
 
@@ -56,6 +64,10 @@ jobs:
     - name: Test Run Debug
       continue-on-error: true
       run: .\\build\\bin\\main.dir
+
+    - name: Set PATH for shared libraries in windows
+      continue-on-error: true
+      run: set PATH=%PATH%;${{github.workspace}}/turbojpeg/lib    
 
     - name: Run ${{matrix.platform.bin}} executable
       env:
