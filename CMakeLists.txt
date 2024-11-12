@@ -47,13 +47,19 @@ if (MSVC)
 endif ()
 
 if (BUILD_SHARED_LIBS)
-    if(WIN32)
+    if(WIN32 AND NOT MSVC)
         set(LIBJPEG_TURBO_LIB "${LIBJPEG_TURBO_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}turbojpeg${CMAKE_SHARED_LIBRARY_SUFFIX}.a")
+    elseif(MSVC)
+        set(LIBJPEG_TURBO_LIB "${LIBJPEG_TURBO_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}turbojpeg.lib")
     else()
         set(LIBJPEG_TURBO_LIB "${LIBJPEG_TURBO_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}turbojpeg${CMAKE_SHARED_LIBRARY_SUFFIX}")
     endif()
 else()
-    set(LIBJPEG_TURBO_LIB "${LIBJPEG_TURBO_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}turbojpeg${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    if (MSVC)
+        set(LIBJPEG_TURBO_LIB "${LIBJPEG_TURBO_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}turbojpeg-static${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    else()
+        set(LIBJPEG_TURBO_LIB "${LIBJPEG_TURBO_LIB_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}turbojpeg${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    endif()
 endif()
 
 ##############################################################################
@@ -73,6 +79,8 @@ target_link_libraries(main ${LIBJPEG_TURBO_LIB})
 # Copy DLLs to the output directory on windows if there are
 if (WIN32)
     add_custom_command(TARGET main POST_BUILD
+        COMMENT "Copying DLL files to main bin directory"
+
         # copy needed dll file to main binary path
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${install_dir}/bin $<TARGET_FILE_DIR:main>
 

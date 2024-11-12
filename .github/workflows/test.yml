@@ -23,12 +23,13 @@ jobs:
         - { name: Windows GCC,    os: windows-latest, bin: .\\build\\bin\\main.exe, flags: -G "Unix Makefiles" -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
         - { name: MacOS XCode,    os: macos-latest,   bin: ./build/bin/main }
         - { name: Linux GCC,      os: ubuntu-latest,  bin: ./build/bin/main }
-        - { name: Linux Clang,    os: ubuntu-latest,  bin: ./build/bin/main,                 flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ }
+        - { name: Linux Clang,    os: ubuntu-latest,  bin: ./build/bin/main,        flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ }
         config:
         - { name: static, flags: -DBUILD_SHARED_LIBS=FALSE }
         - { name: shared, flags: -DBUILD_SHARED_LIBS=TRUE }
         build:
-        - { name: Debug,          flags: -DCMAKE_BUILD_TYPE=Debug }
+        - { name: Release, flags: -DCMAKE_BUILD_TYPE=Release }
+        # - { name: Debug,   flags: -DCMAKE_BUILD_TYPE=Debug }
 
     steps:
 
@@ -60,14 +61,6 @@ jobs:
         tree .\build\bin\main.dir /f
         echo "LIBJPEGTURBO Directory For Windows Debug"
         tree .\build\bin\LibJpegTurbo.dir /f
-
-    - name: Test Run Debug
-      continue-on-error: true
-      run: .\\build\\bin\\main.dir
-
-    - name: Set PATH for shared libraries in windows
-      continue-on-error: true
-      run: set PATH=%PATH%;${{github.workspace}}/turbojpeg/lib    
 
     - name: Run ${{matrix.platform.bin}} executable
       env:
