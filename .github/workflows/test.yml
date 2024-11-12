@@ -19,11 +19,11 @@ jobs:
         platform:
         - { name: Windows VS2019, os: windows-2019,   bin: .\\build\\bin\\Release\\main.exe }
         - { name: Windows VS2022, os: windows-2022,   bin: .\\build\\bin\\Release\\main.exe }
-        - { name: Windows Clang,  os: windows-latest, bin: .\\build\\bin\\main.exe, flags: -G "Unix Makefiles" -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ }
-        - { name: Windows GCC,    os: windows-latest, bin: .\\build\\bin\\main.exe, flags: -G "Unix Makefiles" -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
+        - { name: Windows Clang,  os: windows-latest, bin: .\\build\\bin\\Release\\main.exe, flags: -G "Visual Studio 17 2022" -A x64 -T ClangCL }
+        - { name: Windows GCC,    os: windows-latest, bin: .\\build\\bin\\main.exe,          flags: -G "Unix Makefiles" -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
         - { name: MacOS XCode,    os: macos-latest,   bin: ./build/bin/main }
         - { name: Linux GCC,      os: ubuntu-latest,  bin: ./build/bin/main }
-        - { name: Linux Clang,    os: ubuntu-latest,  bin: ./build/bin/main,        flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ }
+        - { name: Linux Clang,    os: ubuntu-latest,  bin: ./build/bin/main,                 flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ }
         config:
         - { name: static, flags: -DBUILD_SHARED_LIBS=FALSE }
         - { name: shared, flags: -DBUILD_SHARED_LIBS=TRUE }
@@ -43,6 +43,10 @@ jobs:
 
     - name: Checkout Repository
       uses: actions/checkout@v4
+
+    - name: Show available cmake generator
+      continue-on-error: true
+      run: cmake -G
 
     - name: Configure project
       run: cmake -S . -B build -DCMAKE_INSTALL_PREFIX=install ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.build.flags}}

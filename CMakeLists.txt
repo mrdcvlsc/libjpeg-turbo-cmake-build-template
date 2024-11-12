@@ -24,6 +24,7 @@ include(ExternalProject)
 # Define the libjpeg-turbo external project
 ExternalProject_Add(LibJpegTurbo
     URL https://github.com/libjpeg-turbo/libjpeg-turbo/archive/refs/tags/3.0.4.zip
+    DOWNLOAD_EXTRACT_TIMESTAMP FALSE
     PREFIX ${CMAKE_CURRENT_LIST_DIR}/turbojpeg
     CMAKE_ARGS
       -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_LIST_DIR}/turbojpeg
@@ -107,6 +108,8 @@ cmake_print_variables(CMAKE_SHARED_MODULE_PREFIX)
 cmake_print_variables(CMAKE_SHARED_MODULE_SUFFIX)
 cmake_print_variables(CMAKE_EXTRA_SHARED_LIBRARY_SUFFIXES)
 cmake_print_variables(CMAKE_EXECUTABLE_SUFFIX)
+cmake_print_variables(CMAKE_C_COMPILER)
+cmake_print_variables(CMAKE_CXX_COMPILER)
 message("============================================================")
 
 add_custom_command(TARGET main POST_BUILD

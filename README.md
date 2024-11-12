@@ -1,6 +1,24 @@
-# libturbo-cmake
+# libjpeg-turbo-cmake
 
-## Summary Table of Compatible Combinations
+## Requirements/Recommendations
+
+- It is recommended to install nasm or yasm first to your system (and add the bin paths to env path variables) before cmake configuration for better performance.
+
+- When building with windows GCC, I would recommend to use the Unix Makefile Generator:
+
+    ```cmake
+    -G "Unix Makefiles"
+    ```
+
+- When building with windows Clang, I would recommend to use the **MSVC-like command-line not the GNU** one:
+
+    ```cmake
+    -G "Visual Studio 17 2022" -A x64 -T ClangCL
+    ```
+
+- When building with Mac I would recommend to add the installation path `<clone-or-download-folder>/libjpeg-turbo-cmake-template/turbojpeg/lib` to the `DYLD_LIBRARY_PATH` env variable.
+
+## Table of Compatible Pixel Format & Subsampling Combinations
 
 | Pixel Format      | Description                | Compatible Subsampling     |
 |-------------------|----------------------------|----------------------------|
