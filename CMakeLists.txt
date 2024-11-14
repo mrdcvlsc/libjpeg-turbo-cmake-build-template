@@ -43,10 +43,7 @@ ExternalProject_Get_Property(LibJpegTurbo install_dir)
 set(LIBJPEG_TURBO_INCLUDE_DIR ${install_dir}/include)
 set(LIBJPEG_TURBO_LIB_DIR ${install_dir}/lib)
 
-if (MSVC)
-    file(GLOB LIBJPEG_TURBO_DLL "${install_dir}/bin/*.dll" "${install_dir}/lib/*.dll")
-endif ()
-
+# Set the paths of the libraries for specific platforms
 if (BUILD_SHARED_LIBS)
     if(WIN32 AND NOT MSVC)
         set(LIBJPEG_TURBO_LIB "${LIBJPEG_TURBO_LIB_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}turbojpeg${CMAKE_SHARED_LIBRARY_SUFFIX}.a")
@@ -94,26 +91,3 @@ if (WIN32)
         COMMAND ${CMAKE_COMMAND} -E rm $<TARGET_FILE_DIR:main>/wrjpgcom${CMAKE_EXECUTABLE_SUFFIX}
     )
 endif ()
-
-include(CMakePrintHelpers)
-message("============================================================")
-message("                      VARIABLES")
-message("============================================================")
-cmake_print_variables(LIBJPEG_TURBO_LIB)
-cmake_print_variables(LIBJPEG_TURBO_DLL)
-cmake_print_variables(CMAKE_SHARED_LINKER_FLAGS)
-cmake_print_variables(CMAKE_SHARED_LIBRARY_PREFIX)
-cmake_print_variables(CMAKE_SHARED_LIBRARY_SUFFIX)
-cmake_print_variables(CMAKE_SHARED_MODULE_PREFIX)
-cmake_print_variables(CMAKE_SHARED_MODULE_SUFFIX)
-cmake_print_variables(CMAKE_EXTRA_SHARED_LIBRARY_SUFFIXES)
-cmake_print_variables(CMAKE_EXECUTABLE_SUFFIX)
-cmake_print_variables(CMAKE_C_COMPILER)
-cmake_print_variables(CMAKE_CXX_COMPILER)
-message("============================================================")
-
-add_custom_command(TARGET main POST_BUILD
-    COMMENT "TESTING COMMENT"
-    COMMAND ${CMAKE_COMMAND} -E echo "MAIN TARGET POST BUILD"
-    COMMAND ${CMAKE_COMMAND} -E echo "LIBJPEG_TURBO_DLL = ${LIBJPEG_TURBO_DLL}"
-)

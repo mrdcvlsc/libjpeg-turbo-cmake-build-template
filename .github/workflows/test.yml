@@ -44,27 +44,11 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Show available cmake generator
-      continue-on-error: true
-      run: cmake -G
-
     - name: Configure project
       run: cmake -S . -B build -DCMAKE_INSTALL_PREFIX=install ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.build.flags}}
 
     - name: Build ${{matrix.platform.bin}} executable
       run: cmake --build build --config ${{matrix.build.name}}
-
-    - name: Show build directory tree
-      continue-on-error: true
-      run: |
-        echo "Build Tree"
-        tree .\build /f
-        echo "Build Bin"
-        tree .\build\bin /f
-        echo "Main Binary Directory For Windows Debug"
-        tree .\build\bin\main.dir /f
-        echo "LIBJPEGTURBO Directory For Windows Debug"
-        tree .\build\bin\LibJpegTurbo.dir /f
 
     - name: Run ${{matrix.platform.bin}} executable
       env:
