@@ -24,7 +24,6 @@ include(ExternalProject)
 # Define the libjpeg-turbo external project
 ExternalProject_Add(LibJpegTurbo
     URL https://github.com/libjpeg-turbo/libjpeg-turbo/archive/refs/tags/3.0.4.zip
-    DOWNLOAD_EXTRACT_TIMESTAMP FALSE
     PREFIX ${CMAKE_CURRENT_LIST_DIR}/turbojpeg
     CMAKE_ARGS
       -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_LIST_DIR}/turbojpeg
