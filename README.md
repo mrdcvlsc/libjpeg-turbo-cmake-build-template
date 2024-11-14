@@ -1,5 +1,7 @@
 # libjpeg-turbo-cmake
 
+[![test](https://github.com/mrdcvlsc/libjpeg-turbo-cmake-template/actions/workflows/test.yml/badge.svg)](https://github.com/mrdcvlsc/libjpeg-turbo-cmake-template/actions/workflows/test.yml)
+
 ## Requirements/Recommendations
 
 - It is recommended to install nasm or yasm first to your system (and add the bin paths to env path variables) before cmake configuration for better performance.
